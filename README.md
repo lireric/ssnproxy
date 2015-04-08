@@ -10,4 +10,4 @@ proxy server between serial and TCP interfaces
 
 ###Description
 ssnproxy starts listen on TCP and serial ports. If message with SSN packet arrived to one of interfaces it transfer to another and waiting for response. If response not arrived in 2 seconds reply timeout response message.
-Response can by in HTTP REST POST/GET-like format or plain text stream with SSN data - ssnproxy select only SSN formatted data skipping any headers.
+Request can by HTTP REST POST/GET-like format with SSN-type body or plain text stream with SSN-type data - ssnproxy select only SSN-formatted data skipping any headers.
