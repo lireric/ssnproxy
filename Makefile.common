@@ -1,0 +1,60 @@
+# include Makefile 
+
+#This file is included in the general Makefile, the libs Makefile and the src Makefile
+#Different optimize settings for library and source files can be realized by using arguments
+#Compiler optimize settings:
+# -O0 no optimize, reduce compilation time and make debugging produce the expected results.
+# -O1 optimize, reduce code size and execution time, without much increase of compilation time.
+# -O2 optimize, reduce code execution time compared to ‘O1’, increase of compilation time.
+# -O3 optimize, turns on all optimizations, further increase of compilation time.
+# -Os optimize for size, enables all ‘-O2’ optimizations that do not typically increase code size and other code size optimizations.
+#Recommended optimize settings for release version: -O3
+#Recommended optimize settings for debug version: -O0
+#Valid parameters :
+# OptSRC=0 --> optimize source files using the -O0 setting
+# OptSRC=1 --> optimize source files using the -O1 setting
+# OptSRC=2 --> optimize source files using the -O2 setting
+# OptSRC=3 --> optimize source files using the -O3 setting
+# OptSRC=s --> optimize source files using the -Os setting
+# OptSRC=4 --> optimize source files using the -O3 setting, conditional compiling by use of define RELEASE_PUBLIC (default)
+# all --> build all
+# src --> build src only
+# clean --> clean project
+# tshow --> show optimize settings
+#Example:
+# make OptSRC=0 all tshow 
+
+TOP=$(shell readlink -f "$(dir $(lastword $(MAKEFILE_LIST)))")
+PROGRAM=ssnproxy
+
+INCLUDE=-I$(TOP)/include
+INCLUDE+=-I/usr/local/include
+
+CC=g++ $(INCLUDE)
+LD=g++ -v 
+AR=ar
+GDB=gdb
+
+
+COMMONFLAGS= -Wall -fmessage-length=0 -MMD -MP
+
+
+#Commands for general Makefile and src Makefile
+ifeq ($(OptSRC),0)
+	COMMONFLAGS+=-O0 -g3 
+	InfoTextSrc=src (no optimize, -O0)
+else ifeq ($(OptSRC),1)
+	COMMONFLAGS+=-O1
+	InfoTextSrc=src (optimize time+ size+, -O1)
+else ifeq ($(OptSRC),2)
+	COMMONFLAGS+=-O2
+	InfoTextSrc=src (optimize time++ size+, -O2)
+else ifeq ($(OptSRC),s)
+	COMMONFLAGS+=-Os
+	InfoTextSrc=src (optimize size++, -Os) 
+else ifeq ($(OptSRC),3)
+	COMMONFLAGS+=-O3
+	InfoTextSrc=src (full optimize, -O3)
+endif
+
+CFLAGS+=$(COMMONFLAGS) $(INCLUDE)
